@@ -1,3 +1,26 @@
+import express from "express";
+import {
+  addUserController,
+  getUsersController,
+  getUserTodosController    
+} from "./users.controller.js";
+import {  
+    validateAddUser,
+    validateGetUserTodos
+
+} from "./users.validator.js";
+
+const r = express.Router();
+
+r.post("/", validateAddUser, addUserController);
+
+r.get("/", getUsersController);
+
+r.get("/:id/todos", validateGetUserTodos, getUserTodosController);
+
+
+export default r;
+
 // Aşama 2 — users modülünün ROUTER katmanı.
 //
 // Router başka iş yapmaz: yol + metodu doğru zincire bağlar, o kadar.
