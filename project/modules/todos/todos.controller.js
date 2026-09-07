@@ -1,8 +1,8 @@
 import { getTodos, addTodo, replaceTodo, updateTodo, deleteTodo, getTodoById } from "./todos.service.js";
 
 export const getTodosController = (req, res) => {
-  const todos = getTodos();
-  res.json(todos);
+  const { completed, q } = req.query;
+  res.json(getTodos({ completed, q }));
 };
 
 export const addTodoController = (req, res) => {

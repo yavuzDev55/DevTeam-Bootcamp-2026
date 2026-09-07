@@ -42,8 +42,25 @@ export const deleteTodo = (id) => {
   return deletedTodo;
 }
 
-export const getTodos = () => {
-  return todos;
+export const getTodos = ({ completed, q } = {}) => {
+  let sonuc = todos;
+
+  if (completed === "true" || completed === "false") {
+    const beklenen = completed === "true";   // string → boolean
+    sonuc = sonuc.filter((todo) => todo.completed === beklenen);
+  }
+
+  // --- q araması ---
+  if (typeof q === "string" && q.trim() !== "") {
+    const arama = q.toLowerCase();
+    sonuc = sonuc.filter(
+      (todo) =>
+        todo.title.toLowerCase().includes(arama) ||
+        todo.description.toLowerCase().includes(arama),
+    );
+  }
+
+  return sonuc;
 };
 
 export const getTodoById = (id) => {
