@@ -1,0 +1,22 @@
+{
+  "name": "week-3",
+  "version": "1.0.0",
+  "description": "Hafta 3 dersi — PostgreSQL, Prisma ve migration",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch index.js",
+    "start": "node --env-file=.env index.js",
+    "test": "node --env-file=.env --test --test-concurrency=1 \"tests/**/*.test.js\"",
+    "test:bonus": "node --env-file=.env --test --test-concurrency=1 \"tests-bonus/**/*.test.js\""
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "express": "^5",
+    "pg": "^8.23.0",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "prisma": "^7.10.0"
+  }
+}

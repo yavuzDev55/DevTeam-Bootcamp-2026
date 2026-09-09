@@ -8,8 +8,10 @@ olarak hazırlanmıştır.
 - `Week-1/` — JavaScript/TypeScript alıştırmaları (`npm test` ile kendi kendini
   kontrol eder)
 - `Week-2/` — Ders 2'de canlı yazdığımız kod (referans)
-- `project/` — **Ödev 2.** Kampın sonuna kadar üzerine ekleyeceğimiz Todo API
-  projesi. Kurulum ve yapılacaklar için [`project/README.md`](project/README.md)
+- `Week-3/` — Ders 3'te canlı yazdığımız kod: PostgreSQL, Prisma ve migration
+- `project/` — Kampın sonuna kadar üzerine ekleyeceğimiz Todo API projesi.
+  **Ödev 2** için [`project/README.md`](project/README.md),
+  **Ödev 3** için [`project/ODEV-3.md`](project/ODEV-3.md)
 
 ## Ödev nasıl yapılır
 

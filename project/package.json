@@ -5,13 +5,20 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
-    "test": "node --test \"tests/**/*.test.js\"",
-    "test:bonus": "node --test \"tests-bonus/**/*.test.js\""
+    "start": "node --env-file=.env index.js",
+    "dev": "node --env-file=.env --watch index.js",
+    "test": "node --env-file=.env.test --test --test-concurrency=1 \"tests/**/*.test.js\"",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "@prisma/adapter-pg": "^7",
+    "@prisma/client": "^7",
+    "express": "^5.2.1",
+    "pg": "^8"
+  },
+  "devDependencies": {
+    "prisma": "^7"
   }
 }

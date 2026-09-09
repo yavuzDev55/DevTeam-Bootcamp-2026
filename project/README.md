@@ -1,5 +1,7 @@
 # Ödev 2 — Todo API'yi tamamla
 
+> **Ödev 3 yayında:** [`ODEV-3.md`](ODEV-3.md) — bu ödevin üzerine kuruluyor.
+
 > İTÜ ACM DevTeam Bootcamp 2026 · Ders 2: HTTP, REST API ve Modüler Monolit
 >
 > 📋 [Ödevin tarayıcıda okunabilir hâli (ilerleme takipli)](https://claude.ai/code/artifact/ad33091b-3a10-4d38-81a8-b49b8f3791a7)

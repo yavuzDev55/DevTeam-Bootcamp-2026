@@ -13,29 +13,11 @@ let base = null;
 async function start() {
   if (base) return base;
 
-  // Her test dosyasi TEMIZ bir veritabaniyla baslar.
-  //
-  // Bellekteki dizi her Node surecinde bos basliyordu; veritabani baslamiyor.
-  // Temizlemezsek onceki calistirmadan kalan kayitlar testleri bozar - ozellikle
-  // sabit e-posta kullanan testler ikinci calistirmada 409 alir.
-  //
-  // CASCADE gerekli: todo_tags ve profiles baska tablolara foreign key ile bagli.
-  try {
-    await prisma.$executeRawUnsafe(
-      'TRUNCATE TABLE "todo_tags", "profiles", "todos", "tags", "users" RESTART IDENTITY CASCADE',
-    );
-  } catch (hata) {
-    throw new Error(
-      `Test veritabanı temizlenemedi. Muhtemelen tablolar henüz oluşmadı.
-
-  1) prisma/schema.prisma içindeki modelleri yazın
-  2) npx prisma migrate dev --name init
-  3) Aynı şemayı test branch'ine de uygulayın:
-     node --env-file=.env.test node_modules/prisma/build/index.js migrate deploy
-
-Orijinal hata: ${hata.message}`,
-    );
-  }
+  // Her test dosyası temiz bir veritabanıyla başlar.
+  // Bellekteki dizi her süreçte boş başlıyordu; veritabanı başlamıyor.
+  await prisma.$executeRawUnsafe(
+    'TRUNCATE TABLE "todos", "users" RESTART IDENTITY CASCADE',
+  );
 
   await new Promise((resolve) => {
     listener = app.listen(0, "127.0.0.1", resolve);
@@ -104,9 +86,3 @@ export function makeUser(fields = {}) {
 
 /** Hiçbir kayda ait olmayan, biçimi geçerli bir id. */
 export const OLMAYAN_ID = "00000000-0000-4000-8000-000000000000";
-
-/** Geçerli ve benzersiz bir etiket oluşturur, ham yanıtı döndürür. */
-export function makeTag(name) {
-  const n = name ?? "etiket_" + Math.random().toString(36).slice(2, 10);
-  return post("/tags", { name: n });
-}

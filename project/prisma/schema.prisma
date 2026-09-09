@@ -1,0 +1,19 @@
+// Bu dosyanın generator ve datasource blokları hazır geliyor.
+// Modelleri siz yazacaksınız — ODEV-3.md'deki veri modeli bölümüne bakın.
+
+generator client {
+  // DİKKAT: "prisma-client" (tire yok) generator'ı YALNIZCA TypeScript üretir.
+  // Düz JavaScript projesinde import anında patlar. Bu satırı değiştirmeyin.
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Bağlantı adresi burada değil, prisma.config.js dosyasında.
+}
+
+// TODO: model User   — hafta 2'deki alanlar + profile ilişkisi
+// TODO: model Profile — bire-bir (user_id UNIQUE)
+// TODO: model Todo   — hafta 2'deki alanlar + priority + tags ilişkisi
+// TODO: model Tag
+// TODO: model TodoTag — bağlantı tablosu, bileşik birincil anahtar
