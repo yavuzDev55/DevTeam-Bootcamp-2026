@@ -1,82 +1,92 @@
-export const todos = [];
+import * as todosDb from './todos.db.js';
+import { getTagById } from '../tags/tags.service.js';
+import { getUserById } from '../users/users.service.js';
 
-export const addTodo = ({ title, description, userId }) => {
-  const todo = {
-    id: crypto.randomUUID(),
-    title,
-    description,
-    userId: userId ?? null,
-    completed: false,
-    createdAt: new Date(),
-  };
-  todos.push(todo);
-  return todo;
-};
-
-export const replaceTodo = (id, { title, description, completed }) => {
-  const todo = todos.find((todo) => todo.id === id);
-  if (!todo) {
-    return;
-  }
-  todo.title = title;
-  todo.description = description;
-  todo.completed = completed;
-  return todo;
-}
-
-export const updateTodo = (id, fields) => {
-  const todo = todos.find((todo) => todo.id === id);
-  if (!todo) {
-    return;
-  }
-  Object.assign(todo, fields);
-  return todo;
-};
-
-export const deleteTodo = (id) => {
-  const index = todos.findIndex((todo) => todo.id === id);
-  if (index === -1) {
-    return;
-  }
-  const deletedTodo = todos.splice(index, 1)[0];
-  return deletedTodo;
-}
-
-export const getTodos = ({ completed, q } = {}) => {
-  let sonuc = todos;
+export const getTodos = async (query = {}) => {
+  const { completed, q } = query;
+  const filters = {};
 
   if (completed === "true" || completed === "false") {
-    const beklenen = completed === "true";   // string → boolean
-    sonuc = sonuc.filter((todo) => todo.completed === beklenen);
+    filters.completed = completed === "true";
   }
 
-  // --- q araması ---
   if (typeof q === "string" && q.trim() !== "") {
-    const arama = q.toLowerCase();
-    sonuc = sonuc.filter(
-      (todo) =>
-        todo.title.toLowerCase().includes(arama) ||
-        todo.description.toLowerCase().includes(arama),
-    );
+    filters.q = q.trim();
   }
 
-  return sonuc;
+  return await todosDb.selectAllTodos(filters);
 };
 
-export const getTodoById = (id) => {
-  const todo = todos.find((todo) => todo.id === id);
+export const addTodo = async (todoData) => {
+  if (todoData.userId) {
+    const user = await getUserById(todoData.userId);
+    if (!user) {
+      return { status: 'USER_NOT_FOUND' };
+    }
+  }
+
+  const todo = await todosDb.insertTodo(todoData);
+  return { status: 'SUCCESS', todo };
+};
+
+export const replaceTodo = async (id, fields) => {
+  return await todosDb.updateTodo(id, fields);
+};
+
+export const updateTodo = async (id, fields) => {
+  return await todosDb.updateTodo(id, fields);
+};
+
+export const deleteTodo = async (id) => {
+  return await todosDb.deleteTodo(id);
+};
+
+export const getTodoById = async (id) => {
+  return await todosDb.selectTodoById(id);
+};
+
+export const getTodosByUserId = async (userId) => {
+  return await todosDb.selectTodosByUserId(userId);
+};
+
+export const addTagToTodo = async (todoId, tagId) => {
+  const todo = await todosDb.selectTodoById(todoId);
   if (!todo) {
-    return;
+    return { status: 'TODO_NOT_FOUND' };
   }
-  return todo;
+
+  const tag = await getTagById(tagId);
+  if (!tag) {
+    return { status: 'TAG_NOT_FOUND' };
+  }
+
+  const result = await todosDb.insertTodoTag(todoId, tagId);
+  if (!result) {
+    return { status: 'ALREADY_EXISTS' };
+  }
+
+  return { status: 'SUCCESS', result };
 };
 
-export const getTodosByUserId = (userId) => {
-  return todos.filter(todo => todo.userId === userId);
-}
+export const getTodoTags = async (todoId) => {
+  const todo = await todosDb.selectTodoById(todoId);
+  if (!todo) {
+    return null;
+  }
 
-// TODO (Aşama 1): replaceTodo, updateTodo ve deleteTodo fonksiyonlarını ekleyin.
-//
-// Hatırlatma: service katmanı req/res görmez. Parametre alır, iş yapar,
-// sonuç döndürür. Bulunamayan kayıt için status kodu seçmek controller'ın işi;
-// service sadece "bulamadım" bilgisini döndürsün (ör. undefined).
+  return await todosDb.selectTodoTags(todoId);
+};
+
+export const removeTagFromTodo = async (todoId, tagId) => {
+  const todo = await todosDb.selectTodoById(todoId);
+  if (!todo) {
+    return { status: 'TODO_NOT_FOUND' };
+  }
+
+  const result = await todosDb.deleteTodoTag(todoId, tagId);
+  if (!result) {
+    return { status: 'TAG_NOT_FOUND' };
+  }
+
+  return { status: 'SUCCESS' };
+};

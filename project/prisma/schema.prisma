@@ -13,7 +13,67 @@ datasource db {
 }
 
 // TODO: model User   — hafta 2'deki alanlar + profile ilişkisi
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  profile Profile?
+
+  todos Todo[]
+
+  @@map("users")
+}
+
 // TODO: model Profile — bire-bir (user_id UNIQUE)
+model Profile {
+  id     String   @id @default(uuid()) @db.Uuid
+  bio    String   
+  userId String?  @unique @map("user_id") @db.Uuid
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+} 
+
 // TODO: model Todo   — hafta 2'deki alanlar + priority + tags ilişkisi
+model Todo {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  completed   Boolean  @default(false)
+  priority    Int      @default(0)
+  userId      String?  @map("user_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  todoTags    TodoTag[]
+
+  @@index([completed])
+  @@map("todos")
+}
+
 // TODO: model Tag
+model Tag {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+
+  todoTags TodoTag[]
+
+  @@map("tags")
+}
+
 // TODO: model TodoTag — bağlantı tablosu, bileşik birincil anahtar
+model TodoTag {
+  todoId String @map("todo_id") @db.Uuid
+  tagId  String @map("tag_id") @db.Uuid
+
+  todo Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([todoId, tagId])
+  @@map("todo_tags")
+}

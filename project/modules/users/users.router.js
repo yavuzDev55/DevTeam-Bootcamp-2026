@@ -2,7 +2,9 @@ import express from "express";
 import {
   addUserController,
   getUsersController,
-  getUserTodosController    
+  getUserTodosController,
+  getUserProfileController,
+  updateUserProfileController 
 } from "./users.controller.js";
 import {  
     validateAddUser,
@@ -17,6 +19,10 @@ r.post("/", validateAddUser, addUserController);
 r.get("/", getUsersController);
 
 r.get("/:id/todos", validateGetUserTodos, getUserTodosController);
+
+r.get('/:id/profile', getUserProfileController);
+
+r.put('/:id/profile', updateUserProfileController);
 
 
 export default r;

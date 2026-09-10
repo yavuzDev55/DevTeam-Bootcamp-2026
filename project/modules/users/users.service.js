@@ -1,58 +1,42 @@
-export const users = []; 
+import * as usersDb from './users.db.js';
 
-export const publicUser = ({ id, username, email, createdAt }) => ({
-  id, 
-  username, 
-  email, 
-  createdAt,
-});
-
-export const addUser = (username, email, password) => {
-    const existingUser = users.find(user => user.email === email);
-
-    if (existingUser) {
-        return null; // User with this email already exists
-    }
-
-    const newUser = {
-        id: crypto.randomUUID(),
-        username,
-        email,
-        password,
-        createdAt: new Date(),
-    };
-
-    users.push(newUser);
-    return newUser;
+export const addUser = async (username, email, password) => {
+  return await usersDb.insertUser({ username, email, password });
 };
 
-export const getUsers = () => {
-    return users;
-}
+export const getUsers = async () => {
+  return await usersDb.selectAllUsers();
+};
 
-export const getUserById = (id) => {
-    return users.find(user => user.id === id);
-}
+export const getUserById = async (id) => {
+  return await usersDb.selectUserById(id);
+};
 
-export const getUserByEmail = (email) => {
-    return users.find(user => user.email === email);
-}
+export const getUserByEmail = async (email) => {
+  return await usersDb.selectUserByEmail(email);
+};
 
-// Aşama 2 — users modülünün SERVICE katmanı.
-//
-// Bu katman HTTP bilmez: req/res görmez, status kodu seçmez.
-// Parametre alır, iş yapar, sonuç döndürür.
-//
-// Yazmanız gerekenler:
-//
-//   users                          → in-memory dizi (todos.service.js'teki gibi)
-//   addUser(username, email, password)
-//       → { id, username, email, password, createdAt } oluşturup diziye ekler
-//       → id için crypto.randomUUID() kullanın
-//   getUsers()                     → tüm kullanıcılar
-//   getUserById(id)                → tek kullanıcı, yoksa undefined
-//   getUserByEmail(email)          → e-posta benzersizlik kontrolü için
-//
-// DİKKAT: password alanı bellekte saklanır ama hiçbir yanıtta dönmemeli.
-// Bunu nerede çözeceğiniz size kalmış — service'te "password'süz kopya"
-// döndürmek de, controller'da ayıklamak da kabul edilir.
+export const getProfileByUserId = async (userId) => {
+  const user = await usersDb.selectUserById(userId);
+  if (!user) {
+    return { status: 'USER_NOT_FOUND' };
+  }
+
+  const profile = await usersDb.selectProfileByUserId(userId);
+  if (!profile) {
+    return { status: 'PROFILE_NOT_FOUND' };
+  }
+
+  return { status: 'SUCCESS', profile };
+};
+
+export const updateUserProfile = async (userId, bio) => {
+  const user = await usersDb.selectUserById(userId);
+  if (!user) {
+    return null;
+  }
+
+  return await usersDb.upsertProfile(userId, bio);
+};
+
+export const publicUser = (user) => user;

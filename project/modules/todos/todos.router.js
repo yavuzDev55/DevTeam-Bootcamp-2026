@@ -6,8 +6,11 @@ import {
   updateTodoController,
   deleteTodoController,
   getTodoByIdController,
+  addTagToTodoController,
+  getTodoTagsController,
+  removeTagFromTodoController
 } from "./todos.controller.js";
-import { validateAddTodo, validateReplaceTodo, validateUpdateTodo, validateDeleteTodo } from "./todos.validator.js";
+import { validateAddTodo, validateReplaceTodo, validateUpdateTodo, validateDeleteTodo, validateAddTagToTodo } from "./todos.validator.js";
 
 const r = express.Router();
 
@@ -23,7 +26,10 @@ r.delete("/:id", validateDeleteTodo, deleteTodoController);
 
 r.get("/:id", getTodoByIdController);
 
-// TODO (Aşama 1): PUT /:id, PATCH /:id ve DELETE /:id route'larını ekleyin.
-// Güncelleme route'larının önüne uygun validator'ları zincirlemeyi unutmayın.
+r.post('/:id/tags', validateAddTagToTodo, addTagToTodoController);
+
+r.get('/:id/tags', getTodoTagsController);
+
+r.delete('/:id/tags/:tagId', removeTagFromTodoController);
 
 export default r;
